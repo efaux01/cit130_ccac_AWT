@@ -34,12 +34,19 @@ public class GUI {
     private static FlowLayout centeredText;
     private static Font labelFont;
     
-            
+    
+    /**
+     * Calls other Methods
+     * @param args 
+     */        
     public static void main(String args []){
         GUIMaker();
         eventHandlers();
-    }
+    }//closes main
     
+    /**
+     * Creates the GUI
+     */
     public static void GUIMaker(){
         //Create project Frame(title)
         mainFrame = new Frame("AWT Simple Demo");
@@ -110,7 +117,9 @@ public class GUI {
     
     
     
-    
+    /**
+     * EventHandlers for Buttons
+     */
     public static void eventHandlers(){
         //EventHandler Button 1
         button1.addActionListener(new ActionListener() {
@@ -121,7 +130,7 @@ public class GUI {
                 mainFrame.setVisible(true);
             }//close actionPerformed
         });//close button1.addActionListener
-        
+       
         //EventHandler Button 2
         button2.addActionListener(new ActionListener() {
             @Override
