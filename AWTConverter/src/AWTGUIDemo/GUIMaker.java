@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package AWTGUIDemo;
+import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.Button;
@@ -17,8 +18,10 @@ import java.awt.Panel;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.Checkbox;
+import java.awt.Color;
 import static java.awt.Color.RED;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,14 +33,11 @@ public class GUIMaker {
     private static Frame mainFrame;
     private static Panel leftTopPanel;
     private static Panel rightTopPanel;
-    private static Panel leftMiddlePanel;
-    private static Panel rightMiddlePanel;
     private static Panel topPanel;
-    private static Panel mid1Panel;
-    private static Panel mid2Panel;
+    private static Panel middlePanel;
     private static Panel bottomPanel;
-    private static Panel leftPanel;
-    private static Panel rightPanel;
+    private static Panel bottomLeftPanel;
+    private static Panel bottomRightPanel;
     private static Label fromLabel;
     private static Label toLabel;
     private static Label outputLabel;
@@ -55,13 +55,15 @@ public class GUIMaker {
     private static Checkbox nMilesFrom;
     private static CheckboxGroup distanceFrom;
     private static CheckboxGroup distanceTo;
+    private static Converter converter;
     
     public static void main(String args[]){
+        converter = new Converter();
         createCheckboxes();
         prepareGUI();
         eventHandlers();
         closeWindow();
-    }
+    }//close main
     
     
     public static void createCheckboxes(){
@@ -70,8 +72,8 @@ public class GUIMaker {
         distanceTo = new CheckboxGroup();
         
        //create each checkbox, Label, set CheckboxGroup, isBoxChecked
-        milesTo = new Checkbox("Miles",distanceTo,true);
-        milesFrom = new Checkbox("Miles",distanceFrom,true);
+        milesTo = new Checkbox("Miles",distanceTo,false);
+        milesFrom = new Checkbox("Miles",distanceFrom,false);
         kilometersTo = new Checkbox("Kilometers",distanceTo,false);
         kilometersFrom = new Checkbox("Kilometers",distanceFrom,false);
         leaguesTo = new Checkbox("Leagues",distanceTo, false);
@@ -92,152 +94,162 @@ public class GUIMaker {
         //create frame called "Distance Converte"
         mainFrame = new Frame("Distance Converter");
         //set size of frame to 600 x 600 pixels
-        mainFrame.setSize(600,600);
-        mainFrame.setLayout(new GridLayout(4,1));
+        mainFrame.setSize(600,275);
+        mainFrame.setLayout(new BorderLayout());
         
-        
-        
-        
+        //create input Labels
         fromLabel = new Label("Convert From:");
+        Font unitFont = new Font("",Font.BOLD,14);
         toLabel = new Label("Convert To:");
-        exceptionMessage = new Label();
+        fromLabel.setFont(unitFont);
+        toLabel.setFont(unitFont);
+        
+        //crete input textField and instruction Label
         userTypesHere = new TextField("",20);
-        textInstruct = new Label("Type Unit To Convert:");
+        textInstruct = new Label("Type Number To Convert:");
+        textInstruct.setFont(new Font("",Font.BOLD,14));
         
-        leftPanel = new Panel(new GridLayout(5,1));
+        //create panel for units from checkboxes
+        leftTopPanel = new Panel(new GridLayout(5,1));
         
-        leftPanel.add(fromLabel);
-        leftPanel.add(milesTo);
-        leftPanel.add(kilometersTo);
-        leftPanel.add(leaguesTo);
-        leftPanel.add(nMilesTo);
+        //add checkboxes to leftTopPanel
+        leftTopPanel.add(fromLabel);
+        leftTopPanel.add(milesFrom);
+        leftTopPanel.add(kilometersFrom);
+        leftTopPanel.add(leaguesFrom);
+        leftTopPanel.add(nMilesFrom);
         
-        topPanel = new Panel();
-        mainFrame.add(topPanel);
-        topPanel.add(leftPanel);
+        //crete Panel for units to checkboxes
+        rightTopPanel = new Panel(new GridLayout(5,1));
         
-        rightPanel = new Panel(new GridLayout(5,1));
-        mainFrame.add(rightPanel);
+        //add checkboxes to rightTopPanel
+        rightTopPanel.add(toLabel);
+        rightTopPanel.add(milesTo);
+        rightTopPanel.add(kilometersTo);
+        rightTopPanel.add(leaguesTo);
+        rightTopPanel.add(nMilesTo);
         
-        rightPanel.add(toLabel);
-        rightPanel.add(milesFrom);
-        rightPanel.add(kilometersFrom);
-        rightPanel.add(leaguesFrom);
-        rightPanel.add(nMilesFrom);
-        
-        topPanel.add(rightPanel);
+        //create topPanel
+        FlowLayout leftAlignLayout = new FlowLayout(FlowLayout.LEFT,25,5);
+        topPanel = new Panel(leftAlignLayout);
+        mainFrame.add(topPanel, BorderLayout.NORTH);
+        topPanel.add(leftTopPanel);
+        topPanel.add(rightTopPanel);
        
-        mid1Panel = new Panel(new FlowLayout());
-        mid1Panel.add(textInstruct);
-        mid1Panel.add(userTypesHere);
-        mainFrame.add(mid1Panel);
+        //create first of two Middle Panels
+        middlePanel = new Panel(leftAlignLayout);
+        middlePanel.add(textInstruct);
+        middlePanel.add(userTypesHere);
+        mainFrame.add(middlePanel, BorderLayout.CENTER);
         
+        //create second Middle Panel
+        bottomPanel = new Panel(new BorderLayout());
+        mainFrame.add(bottomPanel, BorderLayout.SOUTH);
+        bottomLeftPanel = new Panel(leftAlignLayout);
+        bottomPanel.add(bottomLeftPanel, BorderLayout.WEST);
+        bottomRightPanel = new Panel(leftAlignLayout);
+        bottomPanel.add(bottomRightPanel, BorderLayout.CENTER);
         
-        rightMiddlePanel = new Panel(new FlowLayout());
-        rightMiddlePanel.add(exceptionMessage);
-        
-        mainFrame.add(rightMiddlePanel);
-        
-        
+        //create calculate Button, set Button size and add to mainFrame
         calculateButton = new Button("Calculate");
-        calculateButton.setPreferredSize(new Dimension(10,10));
-        mainFrame.add(calculateButton);
+        calculateButton.setPreferredSize(new Dimension(125,45));
+        calculateButton.setFont(new Font("",Font.BOLD,18));
+        calculateButton.setBackground(Color.GRAY);
+        calculateButton.setForeground(Color.WHITE);
+        bottomLeftPanel.add(calculateButton);
         
-        outputLabel = new Label(Converter.getUnitsFrom());
-        mainFrame.add(outputLabel);
         
+        //create Units From Label and Add to mainFrame
+        outputLabel = new Label(converter.getUnitsFrom());
+        outputLabel.setFont(unitFont);
+        bottomRightPanel.add(outputLabel);
+        
+        //create exceptionMessage & make it red
+        exceptionMessage = new Label();
+        exceptionMessage.setForeground(RED);
+
+        //set mainFrame to Visisble
         mainFrame.setVisible(true);
-        
-        
-    }
+    }//close prepareGUI
     
     private static void eventHandlers(){
         milesTo.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsTo("Miles");
-                Converter.setConversionFactor(1);
+                converter.setUnitsTo("Miles");
             }
         });
         
         kilometersTo.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsTo("Kilometers");
-                Converter.setConversionFactor(1.16);
+                converter.setUnitsTo("Kilometers");
             }
         }); 
         
         leaguesTo.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-               Converter.setUnitsTo("Leagues");
-               Converter.setConversionFactor(0.29);
+               converter.setUnitsTo("Leagues");
             }
         });
         
         nMilesTo.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsTo("Nautical Miles");
-                Converter.setConversionFactor(0.87);
+                converter.setUnitsTo("Nautical Miles");
             }
         });
         
         milesFrom.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsFrom("Miles");
-                Converter.setInMiles(1);
+                converter.setUnitsFrom("Miles");
             }
         });
         
         kilometersFrom.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsFrom("Kilometers");
-                Converter.setInMiles(0.62);
+                converter.setUnitsFrom("Kilometers");
             }
         });
         
         leaguesFrom.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsFrom("Leagues");
-                Converter.setInMiles(3.45);
+                converter.setUnitsFrom("Leagues");
             }
         });
         
         nMilesFrom.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-                Converter.setUnitsFrom("Nautical Miles");
-                Converter.setInMiles(1.15);
+                converter.setUnitsFrom("Nautical Miles");
             }
-        });
-        
-        userTypesHere.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try{
-                    String input = userTypesHere.getText().replace(" ", "");
-                    Double number = Double.valueOf(input);
-                    Converter.setBeingConverted(number);
-                }catch(NumberFormatException e){
-                    userTypesHere.setText("");
-                    exceptionMessage.setForeground(RED);
-                    exceptionMessage.setText("Incorrect Data Type! Numbers Only!");
-                    System.out.println(e.toString() +  "\nIncorrect Data Type! Numbers Only!");
-                }
-                
-            }
-            
         });
         
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                exceptionMessage.setText("");
+                try{
+                    bottomRightPanel.removeAll();
+                    String input = userTypesHere.getText().replace(" ", "");
+                    Double number = Double.valueOf(input);
+                    converter.setBeingConverted(number);
+                    exceptionMessage.setText("");
+                    outputLabel.setText(converter.getBeingConverted() + " " +
+                        converter.getUnitsFrom() + " is equal to " + 
+                        converter.calculateAnswer() + " " + converter.getUnitsTo() );
+                    bottomRightPanel.add(outputLabel);
+                    mainFrame.setVisible(true);
+                }catch(NumberFormatException e){
+                    userTypesHere.setText("");
+                    bottomRightPanel.removeAll();
+                    exceptionMessage.setText("Incorrect number entry: Try Again!");
+                    bottomRightPanel.add(exceptionMessage);
+                    mainFrame.setVisible(true);
+                }
                 
             }
         });

@@ -5,56 +5,137 @@
  */
 package AWTGUIDemo;
 
-/**
- *
- * @author eliza
- */
-public class Converter {
-    private static double answer;
-    private static String unitsTo;
-    private static String unitsFrom;
-    private static double inMiles;
-    private static double conversionFactor;
-    private static double beingConverted;
+/** 
+* 
+* @author eliza 
+*/ 
+public class Converter { 
+    private static double answer; 
+    private static String unitsTo; 
+    private static String unitsFrom; 
+    private static double inMiles; 
+    private static double conversionFactor; 
+    private static double beingConverted; 
+
+   
+   
     
-    public static void setUnitsTo(String units){
-        unitsTo = units;    
-    }
+    /**
+     * Calculates the answer based on previous information
+     * @return the answer
+     */
+    public double calculateAnswer(){ 
+        doConversionFactors();
+        answer = inMiles * conversionFactor * getBeingConverted(); 
+        if(getUnitsTo().equals(getUnitsFrom())){
+            answer = getBeingConverted();
+        }//close if
+        
+        answer = Math.round(getAnswer() * 100);
+        answer = getAnswer()/100;
+        return getAnswer(); 
+    }//close calculateAnswer
     
-    public static String getUnitsTo(){
+    /**
+     * sets conversion factors based on user's chosen units
+     */
+    private void doConversionFactors(){
+        switch(getUnitsTo()){
+            case "Miles":
+                this.setConversionFactor(1);
+                break;
+            case "Kilometers":
+                this.setConversionFactor(1.609344);
+                break;
+            case "Leagues":
+                this.setConversionFactor(0.28965875);
+                break;
+            case "Nautical Miles":
+                this.setConversionFactor(0.86897624);
+                break;
+            default:
+                this.setConversionFactor(1);
+                break;
+        }//close switch
+        switch(getUnitsFrom()){
+            case "Miles":
+                this.setInMiles(1);
+                break;
+            case "Kilometers":
+                this.setInMiles(0.62137119);
+                break;
+            case "Leagues":
+                this.setInMiles(3.45233834);
+                break;
+            case "Nautical Miles":
+                this.setInMiles(1.15077945);
+                break;
+            default:
+                this.setConversionFactor(1);
+                break;
+        }//close switch
+    }//close doConversionFactors
+
+    /**
+     * @return the unitsTo
+     */
+    public String getUnitsTo() {
         return unitsTo;
     }
-    
-    public static void setUnitsFrom(String units){
-        unitsFrom = units;
+
+    /**
+     * @param unitsTo the unitsTo to set
+     */
+    public void setUnitsTo(String unitsTo) {
+        this.unitsTo = unitsTo;
     }
-    
-    public static String getUnitsFrom(){
+
+    /**
+     * @return the unitsFrom
+     */
+    public String getUnitsFrom() {
         return unitsFrom;
     }
-    
-    public static void setInMiles(double converted){
-        inMiles = converted;
+
+    /**
+     * @param unitsFrom the unitsFrom to set
+     */
+    public void setUnitsFrom(String unitsFrom) {
+        this.unitsFrom = unitsFrom;
     }
-    
-    public static void setConversionFactor(double convert){
-        conversionFactor = convert;
+
+    /**
+     * @return the answer
+     */
+    public double getAnswer() {
+        return answer;
     }
-    
-    public static void setBeingConverted(double typed){
-        beingConverted = typed;
-    }
-    
-    public static double getBeingConverted(){
+
+    /**
+     * @return the beingConverted
+     */
+    public double getBeingConverted() {
         return beingConverted;
     }
-    
-    public static double getAnswer(){
-        return answer;
+
+    /**
+     * @param inMiles the inMiles to set
+     */
+    public void setInMiles(double inMiles) {
+        this.inMiles = inMiles;
     }
-    
-    public static double calculateAnswer(){
-        answer = inMiles * conversionFactor * beingConverted;
-        return answer;
+
+    /**
+     * @param conversionFactor the conversionFactor to set
+     */
+    public void setConversionFactor(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
-}
+
+    /**
+     * @param beingConverted the beingConverted to set
+     */
+    public void setBeingConverted(double beingConverted) {
+        this.beingConverted = beingConverted;
+    }
+} 
